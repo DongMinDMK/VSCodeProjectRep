@@ -18,7 +18,7 @@
                 <input type="button" id="deleteMember" value="회원탈퇴"/>
             </div>
             <div class="writebutton">
-                <input type="button" value="게시글 등록" onClick="" />
+                <input type="button" value="게시글 등록" onClick="location.href='/boards/boardWriteForm'"/>
             </div>
         </div>
     
@@ -84,6 +84,12 @@
                     col.className = "col";
                     col.textContent = board.title;
                     row.appendChild(col);
+
+                    col.addEventListener("click", (e)=>{
+                        // 세션에 저장되어 있는 boardid를 저장
+
+                        location.href=`/boards/boardView/${board.num}`;
+                    });
 
                     col = document.createElement("div");
                     col.className = "col";

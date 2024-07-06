@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link href="/board.css" rel="stylesheet"/>
+</head>
+<body>
+    <div id="main_container">
+        <h2>게시글 상세 보기</h2>
+        <div class="board">
+            <div class="field">
+                <div class="label">작성자</div><div class="text" id="writer"></div>
+            </div>
+            <div class="field">
+                <div class="label">이메일</div><div class="text" id="email"></div>
+            </div>
+            <div class="field">
+                <div class="label">조회수</div><div class="text" id="readcount"></div>
+            </div>
+            <div class="field">
+                <div class="label">작성일</div><div class="text" id="writedate"></div>
+            </div>
+            <div class="field">
+                <div class="label">제목</div><div class="text" id="title"></div>
+            </div>
+            <div class="field" style="margin-bottom : 15px; ">
+                <div class="label" >내용</div>
+                <div class="text" style="font-size:140%;flex:1.5;" id="content"></div>
+
+                <div class="label" style="flex:0.5;">이미지</div>
+                <div class="text" style="flex:2;" id="image"></div>
+            </div> 
+            <div class="login-button">
+                <input type="button" class="btn-login" value="수정" onclick="location.href='/boards/updateBoardForm'"/>
+                <input type="button" class="btn-login" value="삭제" />
+                <input type="button" class="btn-login" value="목록" onClick="location.href='/boards/boardList'"/>
+            </div>
+        </div>
+        <script type="text/javascript">
+            getBoard();
+
+            async function getBoard(){
+                try{
+                    const result = await axios.get("/boards/getBoard");
+                    const res = result.data;
+
+                    document.getElementById("writer").innerHTML= res.userid;
+                    document.getElementById("email").innerHTML = res.email;
+                    document.getElementById("readcount").innerHTML = res.readcount;
+                    document.getElementById("writedate").innerHTML = res.writedate.substring(0,10);
+                    document.getElementById("title").innerHTML = res.title;
+                    document.getElementById("content").innerHTML = "<pre>" + res.content + "</pre>";
+
+                    document.getElementById("image").innerHTML = "<img src='/img/"+res.savefilename+"'width='300'/>"
+
+                }catch(err){
+                    console.error(err);
+                }
+            }
+        </script>
+</body>
+</html>

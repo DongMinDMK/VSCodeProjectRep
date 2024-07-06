@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link href="/board.css" rel="stylesheet"/>
+</head>
+<body>
+    <div id="main_container">
+        <h2>게시글 수정</h2>
+        <div class="board">
+            <form class="insertBoard" method="post" name="updateBoard" id="updateBoard" enctype="multipart/form-data">
+                <div class="field">
+                    <label>작성자</label>
+                    <input type="text" name="userid" id="userid" readonly/>
+                </div>
+                <div class="field">
+                    <label>비밀번호</label><input style="flex:2" type="password" name="pass" id="pass"/>
+                    <div style="flex:2; margin-left:20px;">수정하려면 비밀번호를 입력하세요</div>
+                    <input type="hidden" id="oldpass"/>
+                </div>
+                <div class="field">
+                    <label>이메일</label>
+                    <input type="text" name="email" id="email" readonly/>
+                </div>
+                <div class="field">
+                    <label>제목</label><input type="text" name="title" id="title"/>
+                </div>
+                <div class="field">
+                    <label>내용</label><textarea name="content" id="content" rows="10" cols="100"></textarea>
+                </div>
+                <div class="field">
+                    <label>기존 이미지</label>
+                    <div style="flex:4">
+                    <img src="" id="oldimage" width="150" />
+                    <input type="hidden" id="oldsavefilename" name="oldsavefilename" >
+                    <input type="hidden" id="oldimg" name="oldimg" >
+                    <div id="imagename"></div>
+                    <div id="savename"></div>
+                </div>
+            </div>
+            <div class="field">
+                <label>이미지</label>
+                <input type="file" name="image" id="image" />
+            </div>
+            <div class="field">
+                <label>이미지 미리보기</label>
+                <div style="flex:4">
+                    <img src="" id="previewimg" width="150" style="display:none" />
+                    <input type="hidden" id="savefilename" name="savefilename" >
+                    <input type="hidden" id="img" name="img" >
+                    <div id="imagename"></div>
+                    <div id="savename"></div>
+                </div>
+            </div>
+            <div class="field">
+                <input type="submit" value="수정완료" />
+                <input type="button" value="수정취소" onclick="location.href='/boards/boardViewWithoutCnt'"/>
+            </div>
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript">
+        getBoard();
+
+        async function getBoard(){
+            try{
+                const result = await axios.get("/boards/getBoard");
+                const res = result.data;
+
+                document.getElementById("userid").value= res.userid;
+                document.getElementById("email").value = res.email;
+                document.getElementById("title").value = res.title;
+                document.getElementById("content").innerHTML = res.content;
+                document.getElementById("oldsavefilename").value = res.savefilename;
+                document.getElementById("oldimg").value = res.image;
+                document.getElementById("imagename").innerHTML = res.image;
+                document.getElementById("savename").innerHTML = res.savefilename;
+                document.getElementById("oldimage").src = "/img/" + res.savefilename;
+
+            }catch(err){
+                console.error(err);
+            }
+        }
+    </script>
+</body>
+</html>

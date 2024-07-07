@@ -131,5 +131,73 @@ router.get("/updateBoardForm", (req, res)=>{
     res.sendFile(path.join(__dirname, "/..", "/views/updateBoardForm.html"));
 });
 
+router.post("/updateBoard", upObj.single("image"), async(req, res, next)=>{
+    const {title, content, img, savefilename} = req.body;
+    const num = req.session.num;
+
+    const sql = "update board set title=?, content=?, image=?, savefilename=? where num=?";
+
+    try{
+        const connection = await getConnection();
+        const[result, fields] = await connection.query(sql, [title, content, img, savefilename, num]);
+    
+        res.send("OK");
+    }catch(err){
+        next(err);
+    }  
+});
+
+router.get("/boardViewWithoutCnt", async(req,res)=>{
+    res.sendFile(path.join(__dirname, "/..", "/views/boardView.html"));
+});
+
+router.get("/getReplys", async(req,res,next)=>{
+    const num = req.session.num;
+    
+    const sql = "select* from reply where boardnum=? order by replynum desc";
+
+
+
+    try{
+        const connection = await getConnection();
+        const[rows, fields] = await connection.query(sql, [num]);
+    
+        res.send(rows);
+    }catch(err){
+        next(err);
+    }  
+});
+
+router.post("/insertReply", async(req, res, next)=>{
+
+    const {userid, boardnum, content} = req.body;
+
+    const sql = "insert into reply(userid, boardnum, content) values(?,?,?)";
+    
+    try{
+        const connection = await getConnection();
+        const[rows, fields] = await connection.query(sql, [userid, boardnum, content]);
+    
+        res.send(rows);
+    }catch(err){
+        next(err);
+    }  
+});
+
+router.delete("/deleteReply/:replynum", async(req, res, next)=>{
+    const {replynum} = req.params;
+
+    const sql = "delete from reply where replynum=?";
+    
+    try{
+        const connection = await getConnection();
+        const[rows, fields] = await connection.query(sql, [replynum]);
+    
+        res.send("OK");
+    }catch(err){
+        next(err);
+    }  
+}); 
+
 
 module.exports = router;

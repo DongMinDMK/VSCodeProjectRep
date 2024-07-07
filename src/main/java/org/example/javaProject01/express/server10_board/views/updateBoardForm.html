@@ -51,8 +51,8 @@
                     <img src="" id="previewimg" width="150" style="display:none" />
                     <input type="hidden" id="savefilename" name="savefilename" >
                     <input type="hidden" id="img" name="img" >
-                    <div id="imagename"></div>
-                    <div id="savename"></div>
+                    <div id="imagename2"></div>
+                    <div id="savename2"></div>
                 </div>
             </div>
             <div class="field">
@@ -71,6 +71,7 @@
                 const res = result.data;
 
                 document.getElementById("userid").value= res.userid;
+                document.getElementById("oldpass").value=res.pass;
                 document.getElementById("email").value = res.email;
                 document.getElementById("title").value = res.title;
                 document.getElementById("content").innerHTML = res.content;
@@ -84,6 +85,70 @@
                 console.error(err);
             }
         }
+
+        document.getElementById("image").addEventListener("change", async(e)=>{
+            const formData = new FormData();
+            formData.append("image", e.target.files[0]);
+
+            try{
+                const result = await axios.post("/boards/imageup", formData);
+                const res = result.data;
+
+                document.getElementById("previewimg").src="/img/" + res.savefilename;
+                document.getElementById("previewimg").style.display = "inline";
+                document.getElementById("imagename2").innerHTML = res.image;
+                document.getElementById("savename2").innerHTML = res.savefilename;
+                document.getElementById("img").value = res.image;
+                document.getElementById("savefilename").value=res.savefilename;
+
+            }catch(err){
+                console.error(err);
+            }
+        });
+
+        document.getElementById("updateBoard").addEventListener("submit", async(e)=>{
+            e.preventDefault();
+
+
+            if(!e.target.pass.value){
+                return window.alert("비밀번호를 입력해주세요...");
+            }
+
+            if(!e.target.title.value){
+                return window.alert("게시물 제목을 입력해주세요...");
+            }
+
+            if(!e.target.content.value){
+                return window.alert("게시물 비밀번호를 입력해주세요...");
+            }
+
+            if(e.target.pass.value != e.target.oldpass.value){
+                return window.alert("비밀번호 확인이 일치하지 않습니다.");
+            }
+
+            const formData = new FormData();
+
+            formData.append("title", e.target.title.value);
+            formData.append("content", e.target.content.value);
+            formData.append("image", e.target.image.files[0]);
+
+            if(e.target.img.value){
+                formData.append("img", e.target.img.value);
+                formData.append("savefilename", e.target.savefilename.value);
+            }else{
+                formData.append("img", e.target.oldimg.value);
+                formData.append("savefilename", e.target.oldsavefilename.value);
+            }
+
+            try{
+                await axios.post("/boards/updateBoard", formData);
+            }catch(err){
+                console.error(err);
+            }
+
+            location.href="/boards/boardViewWithoutCnt";
+
+        });
     </script>
 </body>
 </html>
